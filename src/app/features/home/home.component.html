@@ -1,0 +1,64 @@
+<!-- Bannière cachée si connecté -->
+<div class="hero-banner" *ngIf="showHero">
+  <div class="hero-overlay">
+    <h1 class="hero-title">Découvrez les meilleurs événements près de chez vous</h1>
+    <p class="hero-subtitle">Concerts, expositions, festivals… il y en a pour tous les goûts !</p>
+  </div>
+</div>
+
+<section class="event-section">
+  <h2 class="section-title">{{ sectionTitle }}</h2>
+
+  <!-- Loading -->
+  <div class="event-grid" *ngIf="loading">
+    <div class="skeleton-card" *ngFor="let n of [1,2,3,4,5,6,7,8]; trackBy: trackByIndex"></div>
+  </div>
+
+  <!-- Empty -->
+  <div class="empty" *ngIf="!loading && filteredEvents.length === 0">
+    <p>Aucun événement trouvé. Essaie un autre mot-clé ou une autre ville.</p>
+  </div>
+
+  <!-- Grid -->
+  <div class="event-grid" *ngIf="!loading && filteredEvents.length">
+    <div class="event-card" *ngFor="let event of filteredEvents; trackBy: trackById">
+      <div class="img-wrap">
+        <img
+          [src]="event.image_url"
+          [attr.alt]="event.title"
+          class="event-img"
+          (error)="onImgError($event.target)"
+        />
+        <div class="chips">
+          <span class="chip type" *ngIf="event.type">{{ event.type }}</span>
+          <span class="chip city" *ngIf="event.commune">{{ event.commune }}</span>
+        </div>
+      </div>
+
+      <div class="event-info">
+        <h3>{{ event.title }}</h3>
+
+        <p class="meta" *ngIf="event.rangeStart || event.rangeEnd || event.lieu">
+          <span *ngIf="event.rangeStart">{{ formatDateRange(event.rangeStart, event.rangeEnd) }}</span>
+          <span *ngIf="(event.rangeStart || event.rangeEnd) && event.lieu"> • </span>
+          <span *ngIf="event.lieu">{{ event.lieu }}</span>
+        </p>
+
+
+
+        <p class="desc line-clamp">{{ event.description }}</p>
+
+        <div class="actions">
+          <a [routerLink]="['/event', event.id]" class="btn-details" aria-label="Voir les détails">En savoir plus</a>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+
+
+

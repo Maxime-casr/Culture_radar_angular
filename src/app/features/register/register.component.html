@@ -1,0 +1,114 @@
+<div class="register">
+  <div class="card">
+    <h2>Créer un compte</h2>
+    <p class="subtitle">Rejoignez la communauté et recevez des recommandations adaptées.</p>
+
+    <form (ngSubmit)="onSubmit()" #registerForm="ngForm" novalidate>
+      <!-- Identité -->
+      <div class="section">
+        <h3>Informations de base</h3>
+
+        <div class="grid-2">
+          <div class="field">
+            <label for="nom">Nom</label>
+            <input id="nom" type="text" name="nom" [(ngModel)]="user.nom" required />
+            <div *ngIf="registerForm.submitted && !user.nom" class="error">Nom requis</div>
+          </div>
+
+          <div class="field">
+            <label for="email">Email</label>
+            <input id="email" type="email" name="email" [(ngModel)]="user.email" required />
+            <div *ngIf="emailError" class="error">Format d’email invalide</div>
+            <div *ngIf="emailExists" class="error">Cet email est déjà utilisé</div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="field">
+            <label for="password">Mot de passe</label>
+            <div class="password-wrap">
+              <input
+                id="password"
+                [type]="showPassword ? 'text' : 'password'"
+                name="mot_de_passe"
+                [(ngModel)]="user.mot_de_passe"
+                required
+                autocomplete="new-password"
+              />
+              <button type="button" class="toggle" (click)="showPassword=!showPassword">
+                {{ showPassword ? 'Masquer' : 'Afficher' }}
+              </button>
+            </div>
+            <div class="hint">Au moins 8 caractères et une majuscule.</div>
+            <div *ngIf="passwordError" class="error">
+              Le mot de passe doit contenir au moins 8 caractères et une majuscule.
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="age">Âge <span class="muted">(facultatif)</span></label>
+            <input id="age" type="number" name="age" min="12" max="120" [(ngModel)]="user.age" placeholder="Ex. 29" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Préférences -->
+      <div class="section">
+        <h3>Disponibilités & préférences <span class="muted">(facultatif)</span></h3>
+
+        <div class="grid-2">
+          <div class="field">
+            <label for="slot">Créneau préféré</label>
+            <select id="slot" name="preferred_slot" [(ngModel)]="user.preferred_slot">
+              <option [ngValue]="null">— Choisir —</option>
+              <option *ngFor="let s of slotOptions" [ngValue]="s.value">{{ s.label }}</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Mobilité</label>
+            <div class="radio-row">
+              <label *ngFor="let m of mobilityOptions" class="radio">
+                <input
+                  type="radio"
+                  name="mobility"
+                  [value]="m.value"
+                  [(ngModel)]="user.mobility"
+                />
+                <span>{{ m.label }}</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Jours disponibles</label>
+          <div class="days">
+            <label class="chip" *ngFor="let d of days; let i = index">
+            <input
+              #cb
+              type="checkbox"
+              [name]="'day_' + d.code"
+              [checked]="user.available_days.includes(d.code)"
+              (change)="toggleDay(d.code, cb.checked)"
+            />
+            <span>{{ d.label }}</span>
+          </label>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="submit" [disabled]="!canSubmit">
+        {{ loading ? 'Création en cours…' : 'Créer mon compte' }}
+      </button>
+
+      <p class="footnote">
+        En créant un compte, vous acceptez nos conditions d’utilisation et notre politique de confidentialité.
+      </p>
+    </form>
+  </div>
+</div>
+
+
+
+

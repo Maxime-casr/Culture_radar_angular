@@ -1,0 +1,11 @@
+
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: #c5a98c;
+}
+
+h1, h2, h3, .hero-title, .section-title {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+}
+

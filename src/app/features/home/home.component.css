@@ -1,0 +1,172 @@
+
+
+.event-section {
+  padding: 20px 20px;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.section-title {
+  text-align: center;
+  font-size: 36px;
+  font-weight: 800;             
+  margin-bottom: 40px;
+  font-family: 'Poppins', sans-serif;  
+  color: #9e0047;
+  text-transform: uppercase;    
+  letter-spacing: 1px;          
+}
+
+
+.event-grid {
+  padding: 40px 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px;
+}
+.event-card {
+  background-color: #fde4b1;
+  border-radius: 16px; 
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  width: 320px; 
+  overflow: hidden;
+  transition: transform 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.event-img {
+  width: 100%;
+  height: auto;            
+  aspect-ratio: 4 / 3;     
+  object-fit: cover;       
+}
+
+.event-card:hover {
+  transform: scale(1.03);
+}
+
+.event-info {
+  padding: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.event-info h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 10px;
+  color: #000000;
+}
+
+.event-info p {
+  font-size: 14px;
+  color: #555;
+  flex-grow: 1;
+}
+
+.btn-details {
+  display: inline-block;
+  margin-top: 15px;
+  padding: 10px;
+  text-align: center;
+  border-radius: 20px;
+  background-color: #049eb3;
+  color: rgb(0, 0, 0);
+  text-decoration: none;
+  font-family: 'Poppins', sans-serif;
+  font-weight: bold;
+  box-shadow: 0 4px 12px rgba(255, 166, 48, 0.4); 
+  transition: background-color 0.3s ease;
+}
+
+.btn-details:hover {
+  background-color: #ffb347;
+}
+.hero-banner {
+  margin-top: 50px; 
+  background-image: url('/assets/Concert.jpg');
+  background-size: cover;
+  background-position: center;
+  height: 500px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 40px;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.hero-overlay {
+  background-color: rgba(0, 0, 0, 0.5); 
+  color: white;
+  text-align: center;
+  padding: 20px;
+  border-radius: 12px;
+  max-width: 90%;
+}
+
+.hero-title {
+  font-size: 40px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: rgb(221, 182, 113);
+}
+
+.hero-subtitle {
+  font-size: 25px;
+  color: rgb(221, 182, 113);
+}
+
+/* Badges (type/ville) */
+.img-wrap { position: relative; }
+.chips {
+  position: absolute;
+  left: 12px; top: 12px;
+  display: flex; gap: 8px; flex-wrap: wrap;
+}
+.chip {
+  background: rgba(0,0,0,0.65);
+  color: #fff; font-size: 12px; padding: 6px 10px;
+  border-radius: 999px; backdrop-filter: blur(2px);
+}
+.chip.type { background: #9e0047; }
+.chip.city { background: #049eb3; }
+
+/* Métadonnées & description */
+.meta { color:#333; margin: 0 0 8px; font-size: 13px; }
+.desc { color:#555; font-size: 14px; }
+.line-clamp {
+  display: -webkit-box; -webkit-line-clamp: 3;line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
+
+/* Actions */
+.actions { display: flex; gap: 10px; align-items: center; margin-top: 12px; }
+.btn-like {
+  padding: 10px 14px; border-radius: 20px; border: none; cursor: pointer;
+  background: #ffd166; font-weight: bold;
+  box-shadow: 0 4px 12px rgba(255, 209, 102, 0.4); transition: filter .2s;
+}
+.btn-like:hover { filter: brightness(0.95); }
+
+/* Empty state */
+.empty { text-align: center; color:#666; padding: 40px 20px; }
+
+/* Skeleton cards */
+.skeleton-card {
+  width: 320px; height: 320px; border-radius: 16px; background: #f4f4f4;
+  position: relative; overflow: hidden;
+}
+.skeleton-card::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+  transform: translateX(-100%); animation: shimmer 1.2s infinite;
+}
+@keyframes shimmer { to { transform: translateX(100%); } }
+
+
+

@@ -1,0 +1,45 @@
+<header class="modern-header" [ngClass]="{ 'compact': !isHomePage }">
+  <div class="logo-container" role="button" tabindex="0" (click)="goHome()">
+    <img src="/logo.png" alt="Logo CultureRadar" class="logo" />
+  </div>
+
+  
+  <div class="header-right" *ngIf="!isLoggedIn; else loggedBlock">
+    <a [routerLink]="['/event-list']" class="header-btn filled">Rechercher</a>
+    <a (click)="goAgenda()" class="header-btn">Agenda</a>
+    <a [routerLink]="['/login']" class="header-btn">Connexion</a>
+    <a [routerLink]="['/register']" class="header-btn filled">Inscription</a>
+  </div>
+
+  <ng-template #loggedBlock>
+    <div class="header-right">
+      <a [routerLink]="['/event-list']" class="header-btn filled">Rechercher</a>
+
+      <!-- 👉 TON bouton, visible uniquement si connecté -->
+      <button
+        *ngIf="!isOrganizer"
+        class="header-btn organizer"
+        type="button"
+        (click)="goBecomeOrganizer()">
+        Devenir organisateur
+      </button>
+
+      <button
+        *ngIf="isOrganizer"
+        class="header-btn organizer"
+        type="button"
+        (click)="goOrganize()">
+        Organiser
+      </button>
+
+      <a *ngIf="!isAbonne" [routerLink]="['/subscribe']" class="header-btn premium">Passer Premium</a>
+      <a (click)="goAgenda()" class="header-btn">Agenda</a>
+      <a [routerLink]="['/user-dashboard']" class="header-btn">Mon compte</a>
+      <a (click)="logout()" class="header-btn filled">Déconnexion</a>
+    </div>
+  </ng-template>
+</header>
+
+
+
+

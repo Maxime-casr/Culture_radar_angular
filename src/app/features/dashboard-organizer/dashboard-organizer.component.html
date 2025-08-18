@@ -1,0 +1,60 @@
+<!-- src/app/features/dashboard-organizer/dashboard-organizer.component.html -->
+<h1>Espace organisateur</h1>
+
+<div *ngIf="error" class="alert alert-error">{{ error }}</div>
+
+<section class="create-box">
+  <h2>Créer un événement</h2>
+
+    <form (ngSubmit)="createEvent()" class="form-grid">
+    <input name="titre" [(ngModel)]="newEvent.titre" placeholder="Titre *" required />
+    <input name="type" [(ngModel)]="newEvent.type" placeholder="Type (concert, exposition…)" required />
+
+    <input name="lieu" [(ngModel)]="newEvent.lieu" placeholder="Lieu" />
+    <input name="commune" [(ngModel)]="newEvent.commune" placeholder="Ville" />
+
+    <!-- Créneau -->
+    <label>Début *</label>
+    <input name="startDate" [(ngModel)]="newEvent.startDate" type="date" required />
+    <input name="startTime" [(ngModel)]="newEvent.startTime" type="time" />
+
+    <label>Fin (optionnel)</label>
+    <input name="endDate" [(ngModel)]="newEvent.endDate" type="date" />
+    <input name="endTime" [(ngModel)]="newEvent.endTime" type="time" />
+
+    <label><input type="checkbox" [(ngModel)]="newEvent.allDay" name="allDay" /> Toute la journée</label>
+
+    <textarea name="description" [(ngModel)]="newEvent.description" placeholder="Description"></textarea>
+    <button type="submit">Créer</button>
+    </form>
+
+    <ul *ngIf="!loading && events.length">
+    <li *ngFor="let ev of events">
+        <b>{{ ev.titre }}</b>
+        <span *ngIf="nextOccurrence(ev)">— {{ nextOccurrence(ev) | date:'medium' }}</span>
+        <span *ngIf="ev.lieu"> — {{ ev.lieu }}</span>
+        <span *ngIf="ev.commune"> ({{ ev.commune }})</span>
+        <button (click)="deleteEvent(ev.id)">Supprimer</button>
+    </li>
+    </ul>
+
+</section>
+
+<hr />
+
+<section>
+  <h2>Mes événements</h2>
+  <div *ngIf="loading">Chargement…</div>
+  <ul *ngIf="!loading && events.length">
+    <li *ngFor="let ev of events">
+      <b>{{ ev.titre }}</b>
+      <span>— {{ ev.date | date:'mediumDate' }}</span>
+      <span *ngIf="ev.lieu"> — {{ ev.lieu }}</span>
+      <span *ngIf="ev.commune"> ({{ ev.commune }})</span>
+      <button (click)="deleteEvent(ev.id)">Supprimer</button>
+    </li>
+  </ul>
+  <p *ngIf="!loading && !events.length">Aucun événement pour le moment.</p>
+</section>
+
+

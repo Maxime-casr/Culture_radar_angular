@@ -1,0 +1,35 @@
+<div class="card" *ngIf="!loading && me; else loadingTpl">
+  <div class="header">
+    <h1>Mon compte</h1>
+    <span class="badge premium" *ngIf="me?.is_abonne">
+      Premium depuis le {{ me.premium_since | date:'mediumDate' }}
+    </span>
+    <span class="badge" *ngIf="!me?.is_abonne">Compte gratuit</span>
+  </div>
+
+  <div class="row">
+    <div class="info">
+      <p class="name">{{ me.nom || 'Utilisateur' }}</p>
+      <p class="email">{{ me.email }}</p>
+
+      <div class="prefs" *ngIf="topPrefs.length">
+        <span class="chip" *ngFor="let p of topPrefs">{{ p }}</span>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn" (click)="goPreferences()">Modifier mes préférences</button>
+      <button class="btn primary" (click)="manageSubscription()">
+        {{ me.is_abonne ? 'Gérer mon abonnement' : 'Passer Premium' }}
+      </button>
+      <button class="btn outline" (click)="logout()">Déconnexion</button>
+    </div>
+  </div>
+</div>
+
+<ng-template #loadingTpl>
+  <div class="card">
+    <p>Chargement…</p>
+    <p *ngIf="error" class="error">{{ error }}</p>
+  </div>
+</ng-template>

@@ -1,0 +1,29 @@
+name: Deploy Angular to Infomaniak
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: npm ci
+      - run: npm run build -- --configuration=production
+        # si ton site est dans un sous-dossier, ajoute:
+        # --base-href=/monapp/
+
+      - name: Deploy via SFTP
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+        with:
+          server: ${{ secrets.SFTP_HOST }}
+          username: ${{ secrets.SFTP_USER }}
+          password: ${{ secrets.SFTP_PASSWORD }}   # ou PRIVATE_KEY si tu utilises une clé
+          port: ${{ secrets.SFTP_PORT }}
+          local_path: dist/**/
+          remote_path: /CHEMIN/WEB/INFOMANIAK/   # ex: /home/clients/XXXX/web/
+          sftpArgs: "-o StrictHostKeyChecking=no"

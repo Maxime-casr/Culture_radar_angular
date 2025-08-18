@@ -1,0 +1,104 @@
+<section class="wrap">
+  <header class="page-head">
+    <h1>Explorer les événements</h1>
+    <div class="actions">
+      <button class="btn" type="button" (click)="useMyLocation()">Autour de moi</button>
+      <button class="btn" type="button" (click)="usePresetLocation()">Autour de Paris</button>
+    </div>
+  </header>
+
+  <!-- Barre de filtres -->
+  <form class="filters" (ngSubmit)="resetAndSearch()" autocomplete="off">
+    <div class="row">
+      <input type="text" placeholder="Mot-clé (ex : rock, théâtre…)" [(ngModel)]="q" name="q" />
+      <input type="text" placeholder="Ville" [(ngModel)]="city" name="city" />
+      <input type="date" [(ngModel)]="date_from" name="date_from" />
+      <input type="date" [(ngModel)]="date_to" name="date_to" />
+      <button type="submit" class="btn primary">Filtrer</button>
+      <button type="button" class="btn ghost" (click)="clearFilters()">Réinitialiser</button>
+      <button type="button" class="btn" (click)="showAdvanced = !showAdvanced">
+        {{ showAdvanced ? 'Masquer' : 'Plus de filtres' }}
+      </button>
+    </div>
+
+    <div class="advanced" *ngIf="showAdvanced">
+      <div class="group">
+        <label class="group-title">Format</label>
+        <div class="segmented">
+          <label><input type="radio" [(ngModel)]="online" name="online" value="all"> Tous</label>
+          <label><input type="radio" [(ngModel)]="online" name="online" value="yes"> En ligne / mixte</label>
+          <label><input type="radio" [(ngModel)]="online" name="online" value="no"> Sur place</label>
+        </div>
+      </div>
+
+      <div class="group">
+        <label class="group-title">Âge recommandé</label>
+        <div class="inline">
+          <input type="number" [(ngModel)]="age_min_lte" name="age_min_lte" placeholder="Min" min="0">
+          <span>à</span>
+          <input type="number" [(ngModel)]="age_max_gte" name="age_max_gte" placeholder="Max" min="0">
+        </div>
+      </div>
+
+      <div class="group">
+        <label class="group-title">Mots-clés</label>
+        <div class="chips">
+          <input type="text"
+                 [(ngModel)]="keywordInput" name="keywordInput"
+                 (keydown.enter)="addKeyword(); $event.preventDefault();"
+                 placeholder="Ajouter un mot-clé et Entrée" />
+          <span *ngFor="let k of keywords" class="chip">
+            {{ k }} <button type="button" (click)="removeKeyword(k)">×</button>
+          </span>
+        </div>
+      </div>
+
+      <div class="group">
+        <label class="group-title">Accessibilité</label>
+        <div class="checks">
+          <label *ngFor="let opt of accessOptions">
+            <input type="checkbox"
+                   [checked]="accessible.includes(opt.code)"
+                   (change)="toggleAccessible(opt.code)">
+            {{ opt.label }}
+          </label>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <!-- Résultats -->
+  <div *ngIf="loading" class="loading">Chargement…</div>
+  <div *ngIf="!loading && events.length === 0" class="empty">Aucun résultat.</div>
+
+  <div class="grid" *ngIf="!loading && events.length">
+    <article class="card" *ngFor="let e of events">
+      <div class="thumb">
+        <img [src]="e.image_url" [attr.alt]="e.title" (error)="onImgError($event)" />
+        <span class="badge" *ngIf="e.date">{{ e.date | date:'EEE d MMM • HH:mm' }}</span>
+      </div>
+      <div class="info">
+        <h3>{{ e.title }}</h3>
+        <p class="meta">
+          <span *ngIf="e.lieu">{{ e.lieu }}</span>
+          <span *ngIf="e.commune">• {{ e.commune }}</span>
+        </p>
+        <a [routerLink]="['/event', e.id]" class="btn primary">Voir</a>
+      </div>
+    </article>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pager" *ngIf="!loading">
+    <button class="btn" (click)="prevPage()" [disabled]="page===1">← Précédent</button>
+    <span>Page {{ page }}</span>
+    <button class="btn" (click)="nextPage()" [disabled]="events.length < per_page">Suivant →</button>
+  </div>
+</section>
+
+
+
+
+
+
+

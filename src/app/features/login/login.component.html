@@ -1,0 +1,20 @@
+<div class="login-container">
+  <h2>Connexion</h2>
+
+  <form (ngSubmit)="onSubmit()" #loginForm="ngForm" novalidate>
+    <label>Email</label>
+    <input type="email" name="email" [(ngModel)]="user.email" required />
+    <div *ngIf="emailError" class="error">Email inconnu</div>
+
+    <label>Mot de passe</label>
+    <input type="password" name="password" [(ngModel)]="user.password" required />
+    <div *ngIf="passwordError" class="error">Mot de passe incorrect</div>
+
+    <div *ngIf="serverError" class="error">{{ serverError }}</div>
+
+    <button type="submit">Se connecter</button>
+  </form>
+</div>
+
+
+

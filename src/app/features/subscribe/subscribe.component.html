@@ -1,0 +1,31 @@
+<div class="sub-card" *ngIf="!loading; else loadingTpl">
+  <h1>Abonnement Premium</h1>
+
+  <p class="pitch">
+    Passez en Premium pour débloquer des avantages :
+  </p>
+  <ul class="benefits">
+    <li>Recommandations plus fines et illimitées</li>
+    <li>Filtres avancés et alertes personnalisées</li>
+    <li>Liste d’envies et export calendrier</li>
+  </ul>
+
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <div *ngIf="!isAbonne; else alreadyTpl" class="cta">
+    <button (click)="subscribe()" [disabled]="saving">
+      {{ saving ? 'Activation…' : 'Passer Premium' }}
+    </button>
+  </div>
+
+  <ng-template #alreadyTpl>
+    <div class="already">
+      <p>✅ Vous êtes abonné depuis le {{ premiumSince | date:'mediumDate' }}.</p>
+      <button class="secondary" (click)="unsubscribe()" [disabled]="saving">Se désabonner</button>
+    </div>
+  </ng-template>
+</div>
+
+<ng-template #loadingTpl>
+  <div class="sub-card"><p>Chargement…</p></div>
+</ng-template>
