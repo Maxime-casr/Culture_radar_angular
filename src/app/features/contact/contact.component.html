@@ -1,0 +1,36 @@
+<section class="wrap">
+  <h1>Contact</h1>
+  <p>Une question, une suggestion ? Écris-nous.</p>
+
+  <form (ngSubmit)="submit()" autocomplete="off" novalidate>
+    <div class="row">
+      <label>Nom *</label>
+      <input type="text" [(ngModel)]="name" name="name" required>
+    </div>
+
+    <div class="row">
+      <label>Email *</label>
+      <input type="email" [(ngModel)]="email" name="email" required>
+    </div>
+
+    <div class="row">
+      <label>Objet</label>
+      <input type="text" [(ngModel)]="subject" name="subject" placeholder="Objet du message">
+    </div>
+
+    <div class="row">
+      <label>Message *</label>
+      <textarea [(ngModel)]="message" name="message" rows="6" required></textarea>
+    </div>
+
+    <!-- Honeypot (caché aux humains) -->
+    <input type="text" [(ngModel)]="website" name="website" class="hp" tabindex="-1" autocomplete="off">
+
+    <button class="btn primary" type="submit" [disabled]="loading">
+      {{ loading ? 'Envoi…' : 'Envoyer' }}
+    </button>
+
+    <p class="ok" *ngIf="ok">Merci, votre message a bien été envoyé.</p>
+    <p class="err" *ngIf="error">{{ error }}</p>
+  </form>
+</section>

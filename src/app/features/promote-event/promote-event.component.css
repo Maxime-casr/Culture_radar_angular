@@ -1,0 +1,11 @@
+.wrap { padding: 24px; }
+.head { display:flex; align-items:center; gap:16px; margin-bottom:16px; }
+h1 { margin:0; }
+.placeholder {
+  padding: 32px;
+  border-radius: 12px;
+  background: #f7f7f7;
+  color:#444;
+}
+.btn { padding: 10px 14px; border-radius: 999px; border: none; cursor: pointer; }
+.btn.ghost { background:#eee; }

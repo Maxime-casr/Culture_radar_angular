@@ -1,0 +1,164 @@
+<section class="wrap">
+  <h1>Dashboard Admin</h1>
+  <div *ngIf="loading" class="skeleton"></div>
+  <div *ngIf="error" class="alert">{{ error }}</div>
+
+  <!-- Onglets -->
+  <nav class="tabs">
+    <button [class.active]="tab==='overview'" (click)="setTab('overview')">Aperçu</button>
+    <button [class.active]="tab==='users'" (click)="setTab('users')">Utilisateurs</button>
+    <button [class.active]="tab==='events'" (click)="setTab('events')">Événements</button>
+  </nav>
+
+  <!-- ===== Aperçu (existant) ===== -->
+  <ng-container *ngIf="tab==='overview' && !loading">
+    <div class="kpi-grid" *ngIf="ov">
+      <div class="kpi"><div class="kpi-title">Utilisateurs</div><div class="kpi-num">{{ ov.users_total }}</div><div class="kpi-sub">+{{ ov.users_new_7d }} sur 7j</div></div>
+      <div class="kpi"><div class="kpi-title">Organisateurs</div><div class="kpi-num">{{ ov.organizers }}</div></div>
+      <div class="kpi"><div class="kpi-title">Premium actifs</div><div class="kpi-num">{{ ov.premium_active }}</div></div>
+      <div class="kpi"><div class="kpi-title">Événements</div><div class="kpi-num">{{ ov.events_total }}</div><div class="kpi-sub">{{ ov.events_upcoming }} à venir</div></div>
+      <div class="kpi"><div class="kpi-title">Participations</div><div class="kpi-num">{{ ov.participations_total }}</div><div class="kpi-sub">+{{ ov.participations_7d }} (7j)</div></div>
+      <div class="kpi"><div class="kpi-title">Note moyenne</div><div class="kpi-num">{{ ov.rating_avg_global ?? '—' }}</div><div class="kpi-sub">{{ ov.ratings_count }} avis</div></div>
+    </div>
+
+    <div class="panel" *ngIf="quality">
+      <h2>Qualité des contenus</h2>
+      <ul class="q-list">
+        <li><b>Sans image :</b> {{ quality.missing_image }}</li>
+        <li><b>Sans géoloc :</b> {{ quality.missing_geo }}</li>
+        <li><b>Sans mots-clés :</b> {{ quality.missing_keywords }}</li>
+        <li><b>Sans créneau :</b> {{ quality.missing_occurrences }}</li>
+        <li><b>Avec image :</b> {{ ov.events_with_image_pct | number : '1.0-1' }}%</li>
+        <li><b>Avec géoloc :</b> {{ ov.events_with_geo_pct | number : '1.0-1' }}%</li>
+      </ul>
+    </div>
+
+    <div class="grid-2" *ngIf="top">
+      <div class="panel">
+        <h2>Top participations</h2>
+        <ul class="list">
+          <li *ngFor="let e of top.most_participated">
+            <img [src]="e.image_url ? 'https://img.openagenda.com/u/400x0/main/'+e.image_url : '/assets/placeholder.jpg'" alt="">
+            <div class="meta">
+              <div class="title">{{ e.titre }}</div>
+              <div class="sub">{{ e.commune || '—' }}</div>
+              <div class="bar"><span [ngStyle]="barW(e.metric, top.most_participated[0]?.metric || 1)"></span></div>
+            </div>
+            <div class="metric">{{ e.metric }}</div>
+          </li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h2>Meilleures notes (≥3 avis)</h2>
+        <ul class="list">
+          <li *ngFor="let e of top.best_rated">
+            <img [src]="e.image_url ? 'https://img.openagenda.com/u/400x0/main/'+e.image_url : '/assets/placeholder.jpg'" alt="">
+            <div class="meta">
+              <div class="title">{{ e.titre }}</div>
+              <div class="sub">{{ e.commune || '—' }}</div>
+              <div class="bar"><span [ngStyle]="barW(e.metric, 5)"></span></div>
+            </div>
+            <div class="metric">{{ e.metric | number:'1.1-2' }}/5</div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="panel" *ngIf="series">
+      <h2>Séries (30 jours)</h2>
+      <div class="series">
+        <div><h3>Inscrits</h3><div class="spark"><span *ngFor="let p of series.users" [style.height.%]="(p.count || 0) * 10"></span></div></div>
+        <div><h3>Participations</h3><div class="spark"><span *ngFor="let p of series.participations" [style.height.%]="(p.count || 0) * 10"></span></div></div>
+        <div><h3>Notes</h3><div class="spark"><span *ngFor="let p of series.ratings" [style.height.%]="(p.count || 0) * 10"></span></div></div>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- ===== Utilisateurs ===== -->
+  <ng-container *ngIf="tab==='users'">
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Utilisateurs</h2>
+        <div class="search">
+          <input placeholder="Rechercher nom/email/role" [(ngModel)]="uQ" (keyup.enter)="uSearch()">
+          <button class="btn" (click)="uSearch()">Rechercher</button>
+        </div>
+      </div>
+
+      <div *ngIf="uLoading" class="skeleton"></div>
+      <div *ngIf="uError" class="alert">{{ uError }}</div>
+
+      <div class="table-responsive" *ngIf="!uLoading">
+        <table class="table">
+          <thead>
+            <tr><th>ID</th><th>Nom</th><th>Email</th><th>Rôle</th><th>Premium</th><th>Créé</th><th></th></tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let u of users">
+              <td>{{ u.id }}</td>
+              <td>{{ u.nom || '—' }}</td>
+              <td>{{ u.email }}</td>
+              <td><span class="badge" [class.badge-admin]="u.role==='admin'" [class.badge-org]="u.role==='organizer'">{{ u.role }}</span></td>
+              <td><span class="badge" [class.badge-ok]="u.is_abonne" [class.badge-muted]="!u.is_abonne">{{ u.is_abonne ? 'Oui' : 'Non' }}</span></td>
+              <td>{{ u.created_at | date:'dd/MM/yyy HH:mm' }}</td>
+              <td class="cell-actions">
+                <button class="btn danger" (click)="deleteUser(u.id)">Supprimer</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="pager">
+          <button class="btn" (click)="uPrev()" [disabled]="uPage===1">← Précédent</button>
+          <span>Page {{ uPage }}</span>
+          <button class="btn" (click)="uNext()" [disabled]="users.length < uPer">Suivant →</button>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- ===== Événements ===== -->
+  <ng-container *ngIf="tab==='events'">
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Événements</h2>
+        <div class="search">
+          <input placeholder="Rechercher titre/lieu/ville" [(ngModel)]="eQ" (keyup.enter)="eSearch()">
+          <button class="btn" (click)="eSearch()">Rechercher</button>
+        </div>
+      </div>
+
+      <div *ngIf="eLoading" class="skeleton"></div>
+      <div *ngIf="eError" class="alert">{{ eError }}</div>
+
+      <div class="table-responsive" *ngIf="!eLoading">
+        <table class="table">
+          <thead>
+            <tr><th>ID</th><th>Visuel</th><th>Titre</th><th>Ville</th><th>Owner</th><th>À venir</th><th></th></tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let e of events">
+              <td>{{ e.id }}</td>
+              <td><img class="thumb" [src]="e.image_url ? 'https://img.openagenda.com/u/200x0/main/'+e.image_url : '/assets/placeholder.jpg'"></td>
+              <td>{{ e.titre }}</td>
+              <td>{{ e.commune || '—' }}</td>
+              <td>{{ e.owner_id || '—' }}</td>
+              <td><span class="badge">{{ e.upcoming }}</span></td>
+              <td class="cell-actions">
+                <button class="btn danger" (click)="deleteEvent(e.id)">Supprimer</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="pager">
+          <button class="btn" (click)="ePrev()" [disabled]="ePage===1">← Précédent</button>
+          <span>Page {{ ePage }}</span>
+          <button class="btn" (click)="eNext()" [disabled]="events.length < ePer">Suivant →</button>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</section>
+
+

@@ -1,0 +1,87 @@
+<section class="create-box">
+  <h2>Créer un événement</h2>
+
+  <form (ngSubmit)="submit()" class="form-grid">
+
+    <input name="titre" [(ngModel)]="form.titre" placeholder="Titre *" required />
+
+    <textarea name="description" [(ngModel)]="form.description" placeholder="Description"></textarea>
+
+    <!-- Image -->
+    <div class="field-row">
+      <input name="image_url" [(ngModel)]="form.image_url" placeholder="URL d’image (optionnel)" />
+      <span>ou</span>
+      <input type="file" (change)="onFile($event)" accept="image/*" />
+    </div>
+    <img *ngIf="imagePreview" [src]="imagePreview" alt="preview" style="max-width:220px;border-radius:8px;border:1px solid #eee"/>
+
+    <!-- Keywords (chips) -->
+    <div class="chips">
+    <label>Mots-clés</label>
+    <div class="chips-wrap">
+      <span class="chip" *ngFor="let k of form.keywords; let i = index">
+        {{ k }}
+        <button type="button" (click)="removeKeyword(i)" aria-label="Supprimer">×</button>
+      </span>
+
+      <div class="chip-input">
+        <input
+          [(ngModel)]="keywordDraft"
+          name="keywordDraft"
+          placeholder="Ex: concert"
+          (keydown.enter)="addKeyword(); $event.preventDefault()"
+        />
+        <button type="button" (click)="addKeyword()">Ajouter</button>
+      </div>
+    </div>
+    <small class="muted">Appuie sur Entrée ou clique sur “Ajouter”.</small>
+  </div>
+  <textarea
+    name="longdescription"
+    [(ngModel)]="form.longdescription"
+    placeholder="Description détaillée (optionnel)"
+    rows="4">
+  </textarea>
+
+  <!-- Conditions -->
+  <textarea
+    name="conditions"
+    [(ngModel)]="form.conditions"
+    placeholder="Conditions (tarifs, réservation, accès...)"
+    rows="3">
+  </textarea>
+
+    <!-- Âges -->
+    <div class="field-row">
+      <input type="number" name="age_min" [(ngModel)]="form.age_min" placeholder="Âge min" min="0" />
+      <input type="number" name="age_max" [(ngModel)]="form.age_max" placeholder="Âge max" min="0" />
+    </div>
+
+    <!-- Adresse -->
+    <input name="adresse" [(ngModel)]="form.adresse" placeholder="Adresse" />
+    <div class="field-row">
+      <input name="code_postal" [(ngModel)]="form.code_postal" placeholder="Code postal" />
+      <input name="commune" [(ngModel)]="form.commune" placeholder="Ville" />
+      <input name="pays" [(ngModel)]="form.pays" placeholder="Pays" />
+    </div>
+
+    <div class="field-row">
+      <input type="number" step="any" name="latitude" [(ngModel)]="form.latitude" placeholder="Latitude" />
+      <input type="number" step="any" name="longitude" [(ngModel)]="form.longitude" placeholder="Longitude" />
+      <button type="button" (click)="geocode()">Géocoder</button>
+    </div>
+
+    <!-- Occurrences -->
+    <h3>Créneaux</h3>
+    <div class="occ-line" *ngFor="let o of occEdits; let i=index">
+      <label><input type="checkbox" [(ngModel)]="o.all_day" name="all_day_{{i}}"> Toute la journée</label>
+      <input type="datetime-local" [(ngModel)]="o.debutLocal" name="debut_{{i}}" required />
+      <input type="datetime-local" [(ngModel)]="o.finLocal"   name="fin_{{i}}"   [disabled]="o.all_day"/>
+      <button type="button" (click)="removeOcc(i)">Supprimer</button>
+    </div>
+    <button type="button" (click)="addOcc()">+ Ajouter un créneau</button>
+
+    <button type="submit" [disabled]="submitting">Créer l’événement</button>
+    <div class="error" *ngIf="error">{{ error }}</div>
+  </form>
+</section>

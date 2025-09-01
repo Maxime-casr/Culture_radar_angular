@@ -216,41 +216,4 @@ export class DashboardUserComponent implements OnInit {
       });
   }
 
-  submitRating(): void {
-    if (!this.ratingTarget || !this.ratingValue) return;
-
-    const headers = this.getAuthHeaders();
-    if (!headers) {
-      alert('Tu dois être connecté pour noter.');
-      return;
-    }
-
-    this.ratingSaving = true;
-
-    this.http
-      .put<{ average: number | null; count: number }>(
-        `${this.API_BASE}/evenements/${this.ratingTarget.evenement_id}/ratings`,
-        { rating: this.ratingValue },
-        { headers }
-      )
-      .subscribe({
-        next: res => {
-          this.ratingAvg = res?.average ?? this.ratingAvg;
-          this.ratingCount = res?.count ?? this.ratingCount;
-          this.ratingSaving = false;
-          this.closeRating();
-        },
-        error: err => {
-          this.ratingSaving = false;
-          if (err?.status === 401) {
-            alert('Session expirée. Connecte-toi pour noter.');
-          } else if (err?.status === 403) {
-            // rappel des règles côté API
-            alert("Tu ne peux noter que des événements PASSÉS auxquels tu as participé.");
-          } else {
-            alert(err?.error?.detail || "Impossible d’enregistrer ta note.");
-          }
-        }
-      });
-  }
 }

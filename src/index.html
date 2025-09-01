@@ -10,23 +10,28 @@
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&family=Roboto&display=swap" rel="stylesheet" />
 
-  <!-- Leaflet CSS (sans integrity) -->
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    crossorigin="anonymous"
-  />
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="anonymous" />
+
+  <!-- === Google Analytics 4 === -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-LNK1XETKNV"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-LNK1XETKNV', { send_page_view: false });
+  </script>
+  <!-- === /Google Analytics === -->
 </head>
 <body>
   <app-root></app-root>
 
-  <!-- Leaflet JS (sans integrity) -->
-  <script
-    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    crossorigin="anonymous"
-  ></script>
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="anonymous"></script>
 </body>
 </html>
+
+
 
 
 

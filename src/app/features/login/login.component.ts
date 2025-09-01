@@ -40,12 +40,18 @@ export class LoginComponent {
         this.router.navigate(['/']);
       },
       error: (err) => {
-        if (err.status === 401) this.passwordError = true;
-        else if (err.status === 404) this.emailError = true;
-        else this.serverError = 'Erreur serveur. Veuillez réessayer plus tard.';
+      if (err.status === 401) {
+        this.passwordError = true;
+      } else if (err.status === 403 && err.error?.detail === 'Email non vérifié') {
+        this.serverError = 'Ton e-mail n’est pas vérifié. Clique sur le lien reçu par e-mail.';
+      } else {
+        this.serverError = 'Erreur serveur. Veuillez réessayer plus tard.';
       }
+    }
     });
   }
+
+
 }
 
 

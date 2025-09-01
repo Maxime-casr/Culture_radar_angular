@@ -1,60 +1,53 @@
-<!-- src/app/features/dashboard-organizer/dashboard-organizer.component.html -->
 <h1>Espace organisateur</h1>
 
+<div class="bar">
+  <a class="btn" routerLink="/organizer/new">+ Créer un événement</a>
+</div>
+
 <div *ngIf="error" class="alert alert-error">{{ error }}</div>
+<div *ngIf="loading" class="loading">Chargement…</div>
 
-<section class="create-box">
-  <h2>Créer un événement</h2>
+<div class="grid" *ngIf="!loading && events.length; else noEvents">
+  <article class="card" *ngFor="let ev of events">
+    <div class="thumb">
+      <img [src]="ev.image_url || '/assets/Concert.jpg'"
+           [alt]="ev.titre"
+           (error)="onImgError($event)" />
+    </div>
 
-    <form (ngSubmit)="createEvent()" class="form-grid">
-    <input name="titre" [(ngModel)]="newEvent.titre" placeholder="Titre *" required />
-    <input name="type" [(ngModel)]="newEvent.type" placeholder="Type (concert, exposition…)" required />
+    <div class="body">
+      <h3 class="title">{{ ev.titre }}</h3>
 
-    <input name="lieu" [(ngModel)]="newEvent.lieu" placeholder="Lieu" />
-    <input name="commune" [(ngModel)]="newEvent.commune" placeholder="Ville" />
+      <p class="place">
+        <ng-container *ngIf="ev.lieu">{{ ev.lieu }}</ng-container>
+        <ng-container *ngIf="ev.commune"> — {{ ev.commune }}</ng-container>
+      </p>
 
-    <!-- Créneau -->
-    <label>Début *</label>
-    <input name="startDate" [(ngModel)]="newEvent.startDate" type="date" required />
-    <input name="startTime" [(ngModel)]="newEvent.startTime" type="time" />
+      <p class="date" *ngIf="nextOccurrence(ev) as nd">
+        Prochain créneau : <strong>{{ nd | date:'EEE d MMM, HH:mm' }}</strong>
+      </p>
+      <p class="date muted" *ngIf="!nextOccurrence(ev)">Aucun créneau à venir</p>
 
-    <label>Fin (optionnel)</label>
-    <input name="endDate" [(ngModel)]="newEvent.endDate" type="date" />
-    <input name="endTime" [(ngModel)]="newEvent.endTime" type="time" />
+      <div class="rating" *ngIf="avgById.get(ev.id) as ra">
+        <span class="stars" [title]="ra.average !== null ? (ra.average | number:'1.1-2') + '/5' : 'Pas de note'">
+          {{ stars(ra.average) }}
+        </span>
+        <span class="avg" *ngIf="ra.average !== null">({{ ra.average | number:'1.1-2' }})</span>
+        <span class="count">• {{ ra.count }} avis</span>
+      </div>
+    </div>
 
-    <label><input type="checkbox" [(ngModel)]="newEvent.allDay" name="allDay" /> Toute la journée</label>
+    <div class="actions">
+      <button class="btn" type="button" (click)="view(ev.id)">Voir</button>
+      <a class="btn accent" [routerLink]="['/organizer/promote', ev.id]">Promouvoir</a>
+      <button class="btn danger" type="button" (click)="deleteEvent(ev.id)">Supprimer</button>
+    </div>
+  </article>
+</div>
 
-    <textarea name="description" [(ngModel)]="newEvent.description" placeholder="Description"></textarea>
-    <button type="submit">Créer</button>
-    </form>
+<ng-template #noEvents>
+  <p class="muted">Aucun événement pour le moment.</p>
+</ng-template>
 
-    <ul *ngIf="!loading && events.length">
-    <li *ngFor="let ev of events">
-        <b>{{ ev.titre }}</b>
-        <span *ngIf="nextOccurrence(ev)">— {{ nextOccurrence(ev) | date:'medium' }}</span>
-        <span *ngIf="ev.lieu"> — {{ ev.lieu }}</span>
-        <span *ngIf="ev.commune"> ({{ ev.commune }})</span>
-        <button (click)="deleteEvent(ev.id)">Supprimer</button>
-    </li>
-    </ul>
-
-</section>
-
-<hr />
-
-<section>
-  <h2>Mes événements</h2>
-  <div *ngIf="loading">Chargement…</div>
-  <ul *ngIf="!loading && events.length">
-    <li *ngFor="let ev of events">
-      <b>{{ ev.titre }}</b>
-      <span>— {{ ev.date | date:'mediumDate' }}</span>
-      <span *ngIf="ev.lieu"> — {{ ev.lieu }}</span>
-      <span *ngIf="ev.commune"> ({{ ev.commune }})</span>
-      <button (click)="deleteEvent(ev.id)">Supprimer</button>
-    </li>
-  </ul>
-  <p *ngIf="!loading && !events.length">Aucun événement pour le moment.</p>
-</section>
 
 

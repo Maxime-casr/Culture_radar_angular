@@ -190,6 +190,16 @@
     max-width: 200px;
   }
   
+  .header-btn.admin {
+    background-color: #8b00ff;
+    color: #fff;
+    border: none;
+    font-weight: 700;
+    box-shadow: 0 6px 16px rgba(139, 0, 255, .35);
+  }
+  .header-btn.admin:hover { filter: brightness(0.95); }
+
+  
 }
 
 

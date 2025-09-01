@@ -89,7 +89,6 @@
           <div class="actions">
             <a [routerLink]="['/event', p.evenement_id]" class="btn details">Détails</a>
             <button *ngIf="isFuture(p)" class="btn danger" (click)="cancel(p)">Annuler</button>
-            <button *ngIf="!isFuture(p)" class="btn" (click)="openRating(p)">Noter</button>
           </div>
         </div>
       </div>
@@ -106,34 +105,4 @@
   </div>
 </div>
 
-<!-- Modale de note (inchangé) -->
-<div class="rating-overlay" *ngIf="ratingOpen" (click)="closeRating()"></div>
-<div class="rating-panel" *ngIf="ratingOpen" role="dialog" aria-modal="true">
-  <header class="rating-header">
-    <h4>Donner une note</h4>
-    <button class="icon-btn" (click)="closeRating()" aria-label="Fermer">✕</button>
-  </header>
-
-  <div class="rating-body" *ngIf="ratingTarget as rt">
-    <p class="event-title">{{ rt.evenement_titre }}</p>
-
-    <div class="avg" *ngIf="ratingAvg !== null">
-      Moyenne : {{ ratingAvg | number:'1.1-2' }} / 5
-      <span *ngIf="ratingCount !== null">– {{ ratingCount }} vote{{ ratingCount === 1 ? '' : 's' }}</span>
-    </div>
-    <div class="avg" *ngIf="ratingAvg === null && ratingLoading">Chargement…</div>
-
-    <div class="picker" [class.disabled]="ratingSaving">
-      <button *ngFor="let n of [1,2,3,4,5]" type="button" class="pick" [class.active]="ratingValue === n" (click)="ratingValue = n">
-        {{ n }}
-      </button>
-    </div>
-
-    <div class="actions">
-      <button class="btn details" [disabled]="!ratingValue || ratingSaving" (click)="submitRating()">
-        {{ ratingSaving ? 'Enregistrement…' : 'Valider' }}
-      </button>
-    </div>
-  </div>
-</div>
 

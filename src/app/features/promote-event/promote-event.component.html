@@ -1,0 +1,12 @@
+<section class="wrap">
+  <h1>Offre mise en avant – 30€</h1>
+  <p>Votre événement sera sponsorisé pendant <strong>7 jours</strong> et remontera en tête des listes.</p>
+
+  <button class="btn primary" (click)="activateBoost30()" [disabled]="loading || done">
+    {{ loading ? 'Activation…' : (done ? 'Activé ✅' : 'Activer pour 30€') }}
+  </button>
+
+  <p class="ok" *ngIf="done">C’est activé ! Retour aux <a routerLink="/organizer">événements</a>.</p>
+  <p class="err" *ngIf="error">{{ error }}</p>
+</section>
+

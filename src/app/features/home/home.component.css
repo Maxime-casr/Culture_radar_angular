@@ -166,6 +166,41 @@
   background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
   transform: translateX(-100%); animation: shimmer 1.2s infinite;
 }
+
+/* --- note / étoiles --- */
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 6px 0 10px;
+}
+.stars { display: inline-flex; gap: 2px; line-height: 1; }
+.star {
+  font-size: 16px;
+  color: #ddd;          /* vide */
+}
+.star.full {
+  color: #ffb347;       /* étoile remplie */
+}
+.rating-num { font-weight: 600; color: #333; }
+.rating-count { color: #777; }
+
+/* --- badge logo organisateur --- */
+.owner-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: #fff;
+  border-radius: 999px;
+  padding: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,.22);
+}
+.owner-badge img {
+  display: block;
+  width: 28px;
+  height: 28px;
+}
+
 @keyframes shimmer { to { transform: translateX(100%); } }
 
 

@@ -6,9 +6,7 @@ export class AuthService {
   private loggedIn = new BehaviorSubject<boolean>(!!localStorage.getItem('token'));
   public isLoggedIn$ = this.loggedIn.asObservable();
 
-  // Appelé après /login
-  // (⚠️ userId est un number côté API)
-  // Après un /login réussi :
+  
   login(token: string, user: any) {
     const userWithToken = { ...user, token };
 

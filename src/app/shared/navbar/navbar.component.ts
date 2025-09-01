@@ -25,6 +25,7 @@ export class NavbarComponent implements OnInit {
   isAbonne = false;
   userRole: string | null = null;
   isOrganizer = false; // true si role === 'organizer' (ou admin si tu veux)
+  isAdmin = false;
 
   private API_BASE = 'https://fastapi-cultureradar.onrender.com';
 
@@ -43,6 +44,7 @@ export class NavbarComponent implements OnInit {
         this.isAbonne = false;
         this.userRole = null;
         this.isOrganizer = false;
+        this.isAdmin = false;
       }
     });
 
@@ -74,6 +76,7 @@ export class NavbarComponent implements OnInit {
       this.isAbonne = false; 
       this.userRole = null; 
       this.isOrganizer = false; 
+      this.isAdmin = false;
       return; 
     }
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
@@ -81,13 +84,14 @@ export class NavbarComponent implements OnInit {
       next: (me) => {
         this.isAbonne = !!me?.is_abonne;
         this.userRole = me?.role || 'user';
-        // 👉 règle d’orga : ici on considère 'organizer' (tu peux aussi inclure admin si tu veux)
         this.isOrganizer = this.userRole === 'organizer';
+        this.isAdmin = this.userRole === 'admin';
       },
       error: () => {
         this.isAbonne = false;
         this.userRole = null;
         this.isOrganizer = false;
+        this.isAdmin = false;
       },
     });
   }
@@ -123,4 +127,8 @@ export class NavbarComponent implements OnInit {
     this.isOrganizer = false;
     this.router.navigate(['/']);
   }
+  goAdmin(): void {
+  this.router.navigate(['/dashboard-admin']);
+}
+
 }

@@ -1,0 +1,139 @@
+/* Conteneur principal */
+.create-box {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  max-width: 720px;
+  margin: 2rem auto;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Titre */
+.create-box h2 {
+  margin-bottom: 1.2rem;
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+/* Grille du formulaire */
+.form-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+/* Inputs et textarea */
+.form-grid input,
+.form-grid textarea,
+.form-grid select {
+  width: 100%;
+  padding: 0.7rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: .5rem;
+  font-size: .95rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  background: #fafafa;
+}
+
+.form-grid input:focus,
+.form-grid textarea:focus,
+.form-grid select:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99,102,241,.2);
+  background: #fff;
+}
+
+/* Champs alignés */
+.field-row {
+  display: flex;
+  gap: 1rem;
+}
+
+.field-row input,
+.field-row button {
+  flex: 1;
+}
+
+/* Boutons */
+button {
+  background: #6366f1;
+  color: #fff;
+  padding: 0.7rem 1.2rem;
+  border: none;
+  border-radius: .5rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s, transform 0.1s;
+}
+
+button:hover {
+  background: #4f46e5;
+}
+
+button:active {
+  transform: scale(0.97);
+}
+
+button[disabled] {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+.chips { display: flex; flex-direction: column; gap: .5rem; }
+
+.chips-wrap {
+  display: flex; flex-wrap: wrap; gap: .5rem;
+  background: #f9fafb; border: 1px solid #e5e7eb; padding: .5rem; border-radius: .5rem;
+}
+
+.chip {
+  display: inline-flex; align-items: center; gap: .3rem;
+  background: #e0e7ff; color: #3730a3; padding: .3rem .6rem;
+  border-radius: 999px; font-size: .85rem;
+}
+
+.chip button {
+  background: transparent; border: none; font-size: 1rem; line-height: 1;
+  cursor: pointer; color: #4338ca;
+}
+
+.chip-input { display: inline-flex; gap: .5rem; align-items: center; }
+.chip-input input { min-width: 180px; }
+.muted { color:#6b7280; font-size:.85rem; }
+
+
+/* Occurrences */
+.occ-line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  align-items: center;
+  padding: .5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: .5rem;
+  background: #f9fafb;
+}
+
+.occ-line input[type="datetime-local"] {
+  flex: 1;
+}
+
+/* Aperçu image */
+.create-box img {
+  margin-top: .5rem;
+  border-radius: .5rem;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+/* Erreur */
+.error {
+  margin-top: 1rem;
+  color: #dc2626;
+  font-size: .9rem;
+  background: #fee2e2;
+  padding: .6rem .8rem;
+  border-radius: .5rem;
+}

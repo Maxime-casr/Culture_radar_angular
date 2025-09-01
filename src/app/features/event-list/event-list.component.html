@@ -10,7 +10,7 @@
   <!-- Barre de filtres -->
   <form class="filters" (ngSubmit)="resetAndSearch()" autocomplete="off">
     <div class="row">
-      <input type="text" placeholder="Mot-clé (ex : rock, théâtre…)" [(ngModel)]="q" name="q" />
+      <input type="text" placeholder="Recherche" [(ngModel)]="q" name="q" />
       <input type="text" placeholder="Ville" [(ngModel)]="city" name="city" />
       <input type="date" [(ngModel)]="date_from" name="date_from" />
       <input type="date" [(ngModel)]="date_to" name="date_to" />
@@ -22,15 +22,17 @@
     </div>
 
     <div class="advanced" *ngIf="showAdvanced">
+      <!-- Heures -->
       <div class="group">
-        <label class="group-title">Format</label>
-        <div class="segmented">
-          <label><input type="radio" [(ngModel)]="online" name="online" value="all"> Tous</label>
-          <label><input type="radio" [(ngModel)]="online" name="online" value="yes"> En ligne / mixte</label>
-          <label><input type="radio" [(ngModel)]="online" name="online" value="no"> Sur place</label>
+        <label class="group-title">Heure de début</label>
+        <div class="inline">
+          <input type="number" min="0" max="23" [(ngModel)]="hour_from" name="hour_from" placeholder="De (0-23)">
+          <span>à</span>
+          <input type="number" min="0" max="23" [(ngModel)]="hour_to" name="hour_to" placeholder="À (0-23)">
         </div>
       </div>
 
+      <!-- Âge -->
       <div class="group">
         <label class="group-title">Âge recommandé</label>
         <div class="inline">
@@ -40,29 +42,38 @@
         </div>
       </div>
 
+      <!-- Mots-clés -->
       <div class="group">
         <label class="group-title">Mots-clés</label>
-        <div class="chips">
+        <div class="inline" style="gap:8px; flex-wrap:wrap;">
           <input type="text"
                  [(ngModel)]="keywordInput" name="keywordInput"
-                 (keydown.enter)="addKeyword(); $event.preventDefault();"
-                 placeholder="Ajouter un mot-clé et Entrée" />
-          <span *ngFor="let k of keywords" class="chip">
-            {{ k }} <button type="button" (click)="removeKeyword(k)">×</button>
+                 (keydown.enter)="addKeyword('include'); $event.preventDefault();"
+                 placeholder="Ajouter et Entrée (inclure)" />
+          <button type="button" class="btn" (click)="addKeyword('exclude')">Ajouter en exclusion</button>
+        </div>
+        <div class="chips" style="margin-top:8px;">
+          <strong>Inclure</strong>
+          <span *ngFor="let k of kw_include" class="chip">+ {{ k }}
+            <button type="button" (click)="removeInclude(k)">×</button>
+          </span>
+        </div>
+        <div class="chips">
+          <strong>Exclure</strong>
+          <span *ngFor="let k of kw_exclude" class="chip">− {{ k }}
+            <button type="button" (click)="removeExclude(k)">×</button>
           </span>
         </div>
       </div>
 
+      <!-- Distance -->
       <div class="group">
-        <label class="group-title">Accessibilité</label>
-        <div class="checks">
-          <label *ngFor="let opt of accessOptions">
-            <input type="checkbox"
-                   [checked]="accessible.includes(opt.code)"
-                   (change)="toggleAccessible(opt.code)">
-            {{ opt.label }}
-          </label>
+        <label class="group-title">Distance</label>
+        <div class="inline">
+          <input type="number" min="1" max="200" [(ngModel)]="radius_km" name="radius_km" placeholder="Rayon (km)">
+          <button type="button" class="btn" (click)="geocodeCity()">Géocoder la ville</button>
         </div>
+        <p *ngIf="lat && lon" class="hint">Centre: {{lat | number:'1.4-4'}}, {{lon | number:'1.4-4'}}</p>
       </div>
     </div>
   </form>
@@ -76,9 +87,23 @@
       <div class="thumb">
         <img [src]="e.image_url" [attr.alt]="e.title" (error)="onImgError($event)" />
         <span class="badge" *ngIf="e.date">{{ e.date | date:'EEE d MMM • HH:mm' }}</span>
+         <div class="owner-badge" *ngIf="e.owner_id">
+        <img src="/logo.png" alt="Organisateur">
+      </div>
+
       </div>
       <div class="info">
         <h3>{{ e.title }}</h3>
+         <div class="rating" *ngIf="e.ratingAvg !== null">
+        <span class="stars" aria-label="Note moyenne">
+          <ng-container *ngFor="let s of makeStars(e.ratingAvg)">
+            <span class="star" [class.full]="s === 'full'">★</span>
+          </ng-container>
+        </span>
+        <span class="rating-num">{{ e.ratingAvg | number:'1.1-1' }}</span>
+        <span class="rating-count">({{ e.ratingCount }})</span>
+      </div>
+      
         <p class="meta">
           <span *ngIf="e.lieu">{{ e.lieu }}</span>
           <span *ngIf="e.commune">• {{ e.commune }}</span>
@@ -95,6 +120,7 @@
     <button class="btn" (click)="nextPage()" [disabled]="events.length < per_page">Suivant →</button>
   </div>
 </section>
+
 
 
 

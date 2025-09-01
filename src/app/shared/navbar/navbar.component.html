@@ -15,6 +15,14 @@
     <div class="header-right">
       <a [routerLink]="['/event-list']" class="header-btn filled">Rechercher</a>
 
+      <button
+      *ngIf="isAdmin"
+      class="header-btn admin"
+      type="button"
+      (click)="goAdmin()">
+      Admin
+    </button>
+
       <!-- 👉 TON bouton, visible uniquement si connecté -->
       <button
         *ngIf="!isOrganizer"
@@ -34,7 +42,7 @@
 
       <a *ngIf="!isAbonne" [routerLink]="['/subscribe']" class="header-btn premium">Passer Premium</a>
       <a (click)="goAgenda()" class="header-btn">Agenda</a>
-      <a [routerLink]="['/user-dashboard']" class="header-btn">Mon compte</a>
+      <a [routerLink]="['/user']" class="header-btn">Mon compte</a>
       <a (click)="logout()" class="header-btn filled">Déconnexion</a>
     </div>
   </ng-template>

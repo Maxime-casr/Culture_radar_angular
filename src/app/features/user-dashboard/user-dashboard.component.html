@@ -1,35 +1,99 @@
-<div class="card" *ngIf="!loading && me; else loadingTpl">
-  <div class="header">
-    <h1>Mon compte</h1>
-    <span class="badge premium" *ngIf="me?.is_abonne">
-      Premium depuis le {{ me.premium_since | date:'mediumDate' }}
-    </span>
-    <span class="badge" *ngIf="!me?.is_abonne">Compte gratuit</span>
-  </div>
+<section class="wrap" *ngIf="!loading && me as u">
+  <header class="head">
+    <h1>Mon profil</h1>
+    <span class="sub">Créé le {{ u.created_at | date:'d MMM y, HH:mm' }}</span>
+  </header>
 
-  <div class="row">
-    <div class="info">
-      <p class="name">{{ me.nom || 'Utilisateur' }}</p>
-      <p class="email">{{ me.email }}</p>
-
-      <div class="prefs" *ngIf="topPrefs.length">
-        <span class="chip" *ngFor="let p of topPrefs">{{ p }}</span>
+  <div class="grid">
+    <!-- Carte identite -->
+    <article class="card">
+      <h2>Identité</h2>
+      <div class="row">
+        <label>Nom</label>
+        <input type="text" [(ngModel)]="form.nom" placeholder="Votre nom" />
       </div>
-    </div>
 
-    <div class="actions">
-      <button class="btn" (click)="goPreferences()">Modifier mes préférences</button>
-      <button class="btn primary" (click)="manageSubscription()">
-        {{ me.is_abonne ? 'Gérer mon abonnement' : 'Passer Premium' }}
-      </button>
-      <button class="btn outline" (click)="logout()">Déconnexion</button>
-    </div>
-  </div>
-</div>
+      <div class="row">
+        <label>Email</label>
+        <input type="email" [ngModel]="u.email" disabled />
+        <small class="hint">Pour changer d’e-mail ou de mot de passe, on ajoutera une page dédiée.</small>
+      </div>
 
-<ng-template #loadingTpl>
-  <div class="card">
-    <p>Chargement…</p>
-    <p *ngIf="error" class="error">{{ error }}</p>
+      <div class="row">
+        <label>Âge</label>
+        <input type="number" min="0" max="120" [(ngModel)]="form.age" placeholder="ex. 26" />
+      </div>
+
+      <div class="row">
+        <label>Rôle</label>
+        <input type="text" [ngModel]="roleLabel" disabled />
+      </div>
+    </article>
+
+    <!-- Carte préférences -->
+    <article class="card">
+      <h2>Préférences de sortie</h2>
+
+      <div class="row">
+        <label>Créneau préféré</label>
+        <select [(ngModel)]="form.preferred_slot">
+          <option [ngValue]="null">— Indifférent —</option>
+          <option *ngFor="let opt of slotOptions" [ngValue]="opt.value">{{ opt.label }}</option>
+        </select>
+      </div>
+
+      <div class="row">
+        <label>Jours disponibles</label>
+        <div class="chips">
+          <label *ngFor="let d of days" class="chip">
+          <input
+            type="checkbox"
+            [ngModel]="form.available_days.includes(d.code)"
+            (ngModelChange)="toggleDay(d.code, $event)" />
+          {{ d.label }}
+        </label>
+
+        </div>
+      </div>
+
+      <div class="row">
+        <label>Mode de déplacement</label>
+        <div class="segmented">
+          <label *ngFor="let m of mobilityOptions" class="seg">
+            <input type="radio" name="mobility"
+                   [value]="m.value"
+                   [(ngModel)]="form.mobility" />
+            {{ m.label }}
+          </label>
+          <label class="seg">
+            <input type="radio" name="mobility" [value]="null" [(ngModel)]="form.mobility" />
+            Indifférent
+          </label>
+        </div>
+      </div>
+    </article>
+
+    <!-- Carte abonnement (lecture seule ici) -->
+    <article class="card">
+      <h2>Abonnement</h2>
+      <p *ngIf="u.is_abonne; else notSub">
+        ✅ Abonné depuis le {{ u.premium_since | date:'d MMM y' }}
+      </p>
+      <ng-template #notSub>
+        <p>Non abonné.</p>
+      </ng-template>
+      <small class="hint">Les actions d’abonnement/désabonnement peuvent être ajoutées ici.</small>
+    </article>
   </div>
-</ng-template>
+
+  <footer class="actions">
+    <button class="btn" [disabled]="disabledSave" (click)="save()">
+      {{ saving ? 'Enregistrement…' : 'Enregistrer' }}
+    </button>
+    <span class="ok" *ngIf="saveOk">Modifications enregistrées ✅</span>
+    <span class="err" *ngIf="saveErr">{{ saveErr }}</span>
+  </footer>
+</section>
+
+<div class="loading" *ngIf="loading">Chargement…</div>
+

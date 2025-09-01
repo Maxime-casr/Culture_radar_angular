@@ -155,11 +155,21 @@ export class HomeComponent implements OnInit, OnDestroy {
         rangeEnd: end,       // ISO string ou null
 
         commune: e.commune,
+
+        owner_id: e.owner_id ?? null,
+        ratingAvg: e.rating_average ?? null,
+        ratingCount: e.rating_count ?? 0,
       };
     });
 
     this.loading = false;
   }
+
+  public makeStars(avg: number | null | undefined): ('full'|'empty')[] {
+  if (avg == null) return Array(5).fill('empty');
+  const full = Math.round(avg);
+  return Array.from({ length: 5 }, (_, i) => (i < full ? 'full' : 'empty'));
+}
 
   /** 1er début parmi toutes les occurrences + dernière fin (ou dernier début si pas de fin) */
   private computeRangeFromOccurrences(occs: Array<{ debut: string; fin?: string | null }>): { start: string | null; end: string | null } {

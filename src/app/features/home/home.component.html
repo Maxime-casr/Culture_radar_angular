@@ -35,6 +35,10 @@
         </div>
       </div>
 
+      <div class="owner-badge" *ngIf="event.owner_id">
+        <img src="/logo.png" alt="Organisateur" />
+      </div>
+
       <div class="event-info">
         <h3>{{ event.title }}</h3>
 
@@ -43,6 +47,17 @@
           <span *ngIf="(event.rangeStart || event.rangeEnd) && event.lieu"> • </span>
           <span *ngIf="event.lieu">{{ event.lieu }}</span>
         </p>
+
+        <!-- 👇 Bloc note -->
+      <div class="rating" *ngIf="event.ratingAvg !== null">
+        <span class="stars" aria-label="Note moyenne">
+          <ng-container *ngFor="let s of makeStars(event.ratingAvg); let i = index">
+            <span class="star" [class.full]="s === 'full'">★</span>
+          </ng-container>
+        </span>
+        <span class="rating-num">{{ event.ratingAvg | number:'1.1-1' }}</span>
+        <span class="rating-count">({{ event.ratingCount }})</span>
+      </div>
 
 
 

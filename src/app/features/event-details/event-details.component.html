@@ -62,10 +62,8 @@
   <p class="muted">Aucun créneau sur ce mois.</p>
 </ng-template>
 <p class="muted small">Clique un créneau pour <strong>ajouter/retirer</strong> de ton agenda.</p>
-
-    </article>
-
-    <!-- Colonne droite : carte + infos -->
+  </article>
+<!-- Colonne droite : carte + infos -->
     <aside class="panel secondary">
       <div class="map-head">
         <h2>Se rendre sur place</h2>
@@ -102,6 +100,64 @@
     </aside>
   </div>
 </section>
+
+<section class="panel full">
+
+<h2>Notes & avis</h2>
+
+  <!-- moyenne + compteur -->
+  <div class="rating-avg" *ngIf="ratingAvg as ra">
+    <span class="stars" [title]="ra.average !== null ? (ra.average | number:'1.1-2') + '/5' : 'Pas de note'">
+      <ng-container *ngIf="ra.average !== null; else noAvg">
+        <!-- étoiles unicode simples -->
+        <span *ngFor="let s of [1,2,3,4,5]">{{ s <= Math.round(ra.average) ? '★' : '☆' }}</span>
+        <span class="avg-num">({{ ra.average | number:'1.1-2' }})</span>
+      </ng-container>
+      <ng-template #noAvg>Pas encore de note</ng-template>
+    </span>
+    <span class="count">• {{ ra.count }} avis</span>
+  </div>
+
+  <!-- form noter (si connecté) -->
+  <div class="rate-box" *ngIf="isLoggedIn; else loginToRate">
+    <label>Votre note :</label>
+    <select [(ngModel)]="myRating">
+      <option [ngValue]="null">—</option>
+      <option *ngFor="let n of [1,2,3,4,5]" [ngValue]="n">{{ n }}</option>
+    </select>
+
+    <label>Commentaire (optionnel) :</label>
+    <textarea [(ngModel)]="myComment" rows="3" placeholder="Partage ton ressenti (optionnel)"></textarea>
+
+    <button class="btn" type="button" (click)="submitMyRating()" [disabled]="rateBusy">
+      {{ rateBusy ? 'Envoi…' : 'Envoyer ma note' }}
+    </button>
+    <div class="error" *ngIf="rateError">{{ rateError }}</div>
+  </div>
+  <ng-template #loginToRate>
+    <p class="muted">Connecte-toi pour laisser une note et un commentaire.</p>
+  </ng-template>
+
+  <!-- liste des avis -->
+  <ul class="reviews" *ngIf="reviews.length; else noReviews">
+    <li *ngFor="let r of reviews">
+      <div class="rev-head">
+        <strong>{{ r.user_nom || 'Utilisateur' }}</strong>
+        <span class="rev-stars">
+          <span *ngFor="let s of [1,2,3,4,5]">{{ s <= r.rating ? '★' : '☆' }}</span>
+        </span>
+        <span class="rev-date">{{ r.created_at | date:'short' }}</span>
+      </div>
+      <p class="rev-text" *ngIf="r.commentaire">{{ r.commentaire }}</p>
+    </li>
+  </ul>
+  <ng-template #noReviews>
+    <p class="muted">Aucun avis pour le moment.</p>
+  </ng-template>
+  </section>
+
+    
+
 
 <!-- Skeleton -->
 <section class="wrap" *ngIf="loading">

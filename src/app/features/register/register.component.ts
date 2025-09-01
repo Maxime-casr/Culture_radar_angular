@@ -117,27 +117,10 @@ export class RegisterComponent {
 
     // 1) créer le compte
     this.http.post<any>(`${this.API_BASE}/utilisateurs`, payload).subscribe({
-      next: (createdUser) => {
-        localStorage.setItem('user', JSON.stringify(createdUser));
-
-        // 2) auto-login
-        this.http.post<any>(`${this.API_BASE}/login`, {
-          email: payload.email,
-          mot_de_passe: payload.mot_de_passe
-        }).subscribe({
-          next: (resp) => {
-            this.auth.login(resp.access_token, resp.user.id);
-            localStorage.setItem('user', JSON.stringify(resp.user));
-            this.loading = false;
-
-            this.router.navigate(['/']);
-          },
-          error: (err) => {
-            console.error('Auto-login post-inscription échoué', err);
-            this.loading = false;
-            this.router.navigate(['/login']);
-          }
-        });
+      next: () => {
+      this.loading = false;
+      alert('Compte créé ✅. Vérifie ta boîte mail et clique sur le lien pour activer ton compte.');
+      this.router.navigate(['/login']);
       },
       error: err => {
         this.loading = false;

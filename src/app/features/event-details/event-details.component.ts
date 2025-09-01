@@ -25,6 +25,15 @@ type Ev = {
   keywords?: string[] | null;
   occurrences: Occ[];
 };
+type RatingAverage = { average: number | null; count: number };
+type RatingPublic = {
+  id: number;
+  user_id: number;
+  user_nom?: string | null;
+  rating: number;
+  commentaire?: string | null;
+  created_at: string;
+};
 
 // Leaflet chargé par CDN
 declare const L: any;
@@ -41,6 +50,18 @@ type MonthGroup = { key: string; label: string; items: Occ[] };
 })
 export class EventDetailsComponent implements OnInit, OnDestroy {
   private readonly API_BASE = 'https://fastapi-cultureradar.onrender.com';
+
+  ratingAvg: RatingAverage | null = null;
+  reviews: RatingPublic[] = [];
+  reviewsPage = 1;
+  reviewsPerPage = 10;
+  Math = Math;
+
+  // Mon avis (note + commentaire)
+  myRating: number | null = null;
+  myComment: string = '';
+  rateBusy = false;
+  rateError = '';
 
   loading = true;
   event: Ev | null = null;
@@ -113,6 +134,9 @@ export class EventDetailsComponent implements OnInit, OnDestroy {
           .slice()
           .sort((a, b) => new Date(a.debut).getTime() - new Date(b.debut).getTime());
         this.event = ev;
+        this.loadRatingAverage(ev.id);
+        this.loadReviews(ev.id, 1);
+        if (this.isLoggedIn) this.loadMyRating(ev.id);
 
         /** === NEW: construire les groupes mensuels === */
         this.buildMonthGroups(ev.occurrences);
@@ -383,5 +407,53 @@ isBeforeToday(occ: { debut: string | Date }): boolean {
   get currentGroup(): MonthGroup | null {
     return this.monthGroups[this.currentMonthIdx] ?? null;
   }
+
+  private headersWithAuth(): HttpHeaders {
+  const token = this.auth.getToken?.();
+  return token ? new HttpHeaders().set('Authorization', `Bearer ${token}`) : new HttpHeaders();
+}
+
+private loadRatingAverage(eventId: number): void {
+  this.http.get<RatingAverage>(`${this.API_BASE}/evenements/${eventId}/ratings/avg`)
+    .subscribe({ next: v => this.ratingAvg = v, error: () => this.ratingAvg = { average: null, count: 0 } });
+}
+
+private loadReviews(eventId: number, page = 1): void {
+  const params = new HttpParams().set('page', String(page)).set('per_page', String(this.reviewsPerPage));
+  this.http.get<RatingPublic[]>(`${this.API_BASE}/evenements/${eventId}/ratings`, { params })
+    .subscribe({ next: rows => { this.reviewsPage = page; this.reviews = rows || []; } });
+}
+
+private loadMyRating(eventId: number): void {
+  const headers = this.headersWithAuth();
+  if (!headers.has('Authorization')) return;
+  this.http.get<{ rating: number; commentaire?: string | null }>(`${this.API_BASE}/evenements/${eventId}/ratings/me`, { headers })
+    .subscribe({
+      next: r => { this.myRating = r?.rating ?? null; this.myComment = r?.commentaire ?? ''; },
+      error: () => { /* pas de note pour cet utilisateur => laisser vide */ }
+    });
+}
+
+// Soumettre (note + commentaire)
+submitMyRating(): void {
+  if (!this.event?.id || !this.myRating) { this.rateError = 'Choisis une note.'; return; }
+  const headers = this.headersWithAuth();
+  if (!headers.has('Authorization')) { this.router.navigate(['/login'], { queryParams: { redirect: this.router.url } }); return; }
+
+  this.rateBusy = true; this.rateError = '';
+  const payload = { rating: this.myRating, commentaire: this.myComment?.trim() || null };
+
+  this.http.put<RatingAverage>(`${this.API_BASE}/evenements/${this.event.id}/ratings`, payload, { headers })
+    .subscribe({
+      next: avg => { this.ratingAvg = avg; this.loadReviews(this.event!.id, 1); this.rateBusy = false; },
+      error: (err) => {
+        this.rateBusy = false;
+        if (err?.status === 403) this.rateError = "Vous ne pouvez noter que des événements passés auxquels vous avez participé.";
+        else if (err?.status === 401) { this.router.navigate(['/login'], { queryParams: { redirect: this.router.url } }); }
+        else this.rateError = "Impossible d’enregistrer votre note pour le moment.";
+      }
+    });
+}
+
 }
 
