@@ -33,4 +33,10 @@ export class AdminService {
     return this.http.get<any[]>(`${this.API}/admin/events`, { params });
   }
   deleteEvent(id: number) { return this.http.delete(`${this.API}/admin/events/${id}`); }
+
+  exportZip(tables?: string) {
+    const options = { responseType: 'blob' as const, params: tables ? { tables } : undefined };
+    return this.http.get(`${this.API}/admin/export.zip`, options);
+  }
+  
 }

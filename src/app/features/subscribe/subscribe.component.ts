@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-subscribe',
@@ -19,7 +20,7 @@ export class SubscribeComponent implements OnInit {
 
   private API_BASE = 'https://fastapi-cultureradar.onrender.com';
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router, private route: ActivatedRoute) {}
 
   ngOnInit(): void { this.fetchMe(); }
 
@@ -34,10 +35,10 @@ export class SubscribeComponent implements OnInit {
     const headers = this.getHeaders();
     if (!headers) { this.router.navigate(['/login']); return; }
 
-    this.http.get<any>(`${this.API_BASE}/utilisateurs/me`, { headers }).subscribe({
-      next: me => {
-        this.isAbonne = !!me?.is_abonne;
-        this.premiumSince = me?.premium_since || null;
+    this.http.get<any>(`${this.API_BASE}/utilisateurs/me/subscription`, { headers }).subscribe({
+      next: s => {
+        this.isAbonne = !!s?.is_active;
+        this.premiumSince = s?.premium_since || null;
         this.loading = false;
       },
       error: () => { this.loading = false; this.error = 'Impossible de charger votre statut.'; }
@@ -48,7 +49,13 @@ export class SubscribeComponent implements OnInit {
     const headers = this.getHeaders(); if (!headers) { this.router.navigate(['/login']); return; }
     this.saving = true; this.error = '';
     this.http.post(`${this.API_BASE}/utilisateurs/me/subscribe`, {}, { headers }).subscribe({
-      next: () => { this.saving = false; this.isAbonne = true; this.fetchMe(); },
+      next: () => {
+        this.saving = false;
+        this.isAbonne = true;
+        // navigue directement vers l’agenda (ou le returnUrl)
+        const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') || '/mes-participations';
+        this.router.navigate([returnUrl]);
+      },
       error: () => { this.saving = false; this.error = 'Erreur lors de l’abonnement.'; }
     });
   }

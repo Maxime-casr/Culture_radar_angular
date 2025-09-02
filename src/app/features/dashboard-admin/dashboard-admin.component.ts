@@ -85,5 +85,19 @@ export class DashboardAdminComponent implements OnInit {
       error: () => alert('Suppression impossible')
     });
   }
+
+  downloadExport() {
+    this.admin.exportZip().subscribe({
+      next: (blob: Blob) => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `cultureradar_export.zip`;
+        a.click();
+        URL.revokeObjectURL(url);
+      },
+      error: () => alert('Export impossible pour le moment')
+    });
+  }
 }
 

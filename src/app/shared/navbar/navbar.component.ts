@@ -69,31 +69,43 @@ export class NavbarComponent implements OnInit {
     }
   }
 
-  /** Récupère /utilisateurs/me → { is_abonne, role, ... } */
   private loadMe(): void {
     const token = this.authService.getToken();
-    if (!token) { 
-      this.isAbonne = false; 
-      this.userRole = null; 
-      this.isOrganizer = false; 
-      this.isAdmin = false;
-      return; 
+    if (!token) { this.isAbonne = false; this.userRole = null; this.isOrganizer = false; this.isAdmin = false; return; }
+
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    // 1) récupérer rôle comme avant (si tu veux garder)
+    this.http.get<any>(`${this.API_BASE}/utilisateurs/me`, { headers }).subscribe({
+      next: (me) => { this.userRole = me?.role || 'user'; this.isOrganizer = this.userRole === 'organizer'; this.isAdmin = this.userRole === 'admin'; },
+      error: () => { this.userRole = null; this.isOrganizer = false; this.isAdmin = false; }
+    });
+
+    // 2) statut abonnement ACTIF
+    this.http.get<any>(`${this.API_BASE}/utilisateurs/me/subscription`, { headers }).subscribe({
+      next: (s) => { this.isAbonne = !!s?.is_active; },
+      error: () => { this.isAbonne = false; }
+    });
+  }
+
+  private checkPremiumAndThen(navigateTo: string) {
+    const token = this.authService.getToken();
+    if (!token) {
+      this.router.navigate(['/login'], { queryParams: { returnUrl: navigateTo } });
+      return;
     }
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    this.http.get<any>(`${this.API_BASE}/utilisateurs/me`, { headers }).subscribe({
-      next: (me) => {
-        this.isAbonne = !!me?.is_abonne;
-        this.userRole = me?.role || 'user';
-        this.isOrganizer = this.userRole === 'organizer';
-        this.isAdmin = this.userRole === 'admin';
-      },
-      error: () => {
-        this.isAbonne = false;
-        this.userRole = null;
-        this.isOrganizer = false;
-        this.isAdmin = false;
-      },
-    });
+    this.http.get<any>(`${this.API_BASE}/utilisateurs/me/subscription`, { headers })
+      .subscribe({
+        next: s => {
+          const active = !!s?.is_active;
+          this.isAbonne = active; // mets à jour le cache local
+          if (active) this.router.navigate([navigateTo]);
+          else this.router.navigate(['/subscribe'], { queryParams: { returnUrl: navigateTo } });
+        },
+        error: () => {
+          this.router.navigate(['/subscribe'], { queryParams: { returnUrl: navigateTo } });
+        }
+      });
   }
 
   goAgenda(): void {
@@ -101,7 +113,12 @@ export class NavbarComponent implements OnInit {
       this.router.navigate(['/login'], { queryParams: { returnUrl: '/mes-participations' } });
       return;
     }
-    this.router.navigate(['/mes-participations']);
+    if (this.isAbonne) { 
+      this.router.navigate(['/mes-participations']);
+      return;
+    }
+    
+    this.checkPremiumAndThen('/mes-participations');
   }
 
   goHome(): void { this.router.navigate(['/']); }
