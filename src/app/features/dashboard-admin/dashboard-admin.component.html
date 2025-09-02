@@ -64,14 +64,6 @@
       </div>
     </div>
 
-    <div class="panel" *ngIf="series">
-      <h2>Séries (30 jours)</h2>
-      <div class="series">
-        <div><h3>Inscrits</h3><div class="spark"><span *ngFor="let p of series.users" [style.height.%]="(p.count || 0) * 10"></span></div></div>
-        <div><h3>Participations</h3><div class="spark"><span *ngFor="let p of series.participations" [style.height.%]="(p.count || 0) * 10"></span></div></div>
-        <div><h3>Notes</h3><div class="spark"><span *ngFor="let p of series.ratings" [style.height.%]="(p.count || 0) * 10"></span></div></div>
-      </div>
-    </div>
   </ng-container>
 
   <!-- ===== Utilisateurs ===== -->
