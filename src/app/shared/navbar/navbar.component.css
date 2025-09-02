@@ -19,9 +19,9 @@
   cursor: pointer;
 }
 .header-left .header-btn.filled {
-  font-size: 20px;      /* texte plus gros */
-  padding: 14px 28px;   /* plus de hauteur et largeur */
-  border-radius: 35px;  /* arrondi plus large */
+  font-size: 20px;      
+  padding: 14px 28px;  
+  border-radius: 35px;  
 }
 
 .logo {
@@ -128,6 +128,15 @@
 }
 .header-btn.organizer:hover { filter: brightness(0.95); }
 
+.header-btn.admin {
+    background-color: #f700ff;
+    color: #030303;
+    border: none;
+    font-weight: 700;
+    box-shadow: 0 6px 16px rgba(255, 254, 254, 0.35);
+  }
+  .header-btn.admin:hover { filter: brightness(0.95); }
+
 
 @media (max-width: 768px) {
   .modern-header {
@@ -190,14 +199,7 @@
     max-width: 200px;
   }
   
-  .header-btn.admin {
-    background-color: #8b00ff;
-    color: #fff;
-    border: none;
-    font-weight: 700;
-    box-shadow: 0 6px 16px rgba(139, 0, 255, .35);
-  }
-  .header-btn.admin:hover { filter: brightness(0.95); }
+  
 
   
 }

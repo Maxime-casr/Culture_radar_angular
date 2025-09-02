@@ -171,7 +171,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   return Array.from({ length: 5 }, (_, i) => (i < full ? 'full' : 'empty'));
 }
 
-  /** 1er début parmi toutes les occurrences + dernière fin (ou dernier début si pas de fin) */
+  
   private computeRangeFromOccurrences(occs: Array<{ debut: string; fin?: string | null }>): { start: string | null; end: string | null } {
     if (!occs?.length) return { start: null, end: null };
 
@@ -180,7 +180,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     for (const o of occs) {
       const s = new Date(o.debut);
-      const e = o.fin ? new Date(o.fin) : new Date(o.debut); // si fin absente, on prend le jour du début
+      const e = o.fin ? new Date(o.fin) : new Date(o.debut); 
 
       if (!minStart || s < minStart) minStart = s;
       if (!maxEnd   || e > maxEnd)   maxEnd   = e;

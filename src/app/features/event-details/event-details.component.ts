@@ -230,7 +230,7 @@ export class EventDetailsComponent implements OnInit, OnDestroy {
     this.checkPremiumThen(() => this.toggleParticipation(o, domEvent));
   }
 
-  /** Exécute réellement POST/DELETE des participations (appelée après vérif premium) */
+  
   private toggleParticipation(o: Occ, domEvent: Event): void {
     if (this.pendingOccIds.has(o.id)) return;
 
@@ -239,7 +239,7 @@ export class EventDetailsComponent implements OnInit, OnDestroy {
     this.pendingOccIds.add(o.id);
 
     if (wasSelected) {
-      // ----- DELETE
+      
       const pid = this.partByOcc.get(o.id);
       if (!pid) { this.pendingOccIds.delete(o.id); return; }
 

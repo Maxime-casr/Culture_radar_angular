@@ -18,7 +18,7 @@ export class ContactComponent {
   email = '';
   subject = '';
   message = '';
-  website = ''; // honeypot anti-spam (doit rester vide)
+  website = ''; 
 
   loading = false;
   ok = false;

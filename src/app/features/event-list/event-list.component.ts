@@ -172,7 +172,7 @@ export class EventListComponent implements OnInit, OnDestroy {
       (pos) => {
         this.lat = pos.coords.latitude;
         this.lon = pos.coords.longitude;
-        if (this.radius_km == null) this.radius_km = 30; // défaut utilisateur
+        if (this.radius_km == null) this.radius_km = 30;
         this.resetAndSearch();
       },
       (err) => console.warn('Geoloc refusée', err)

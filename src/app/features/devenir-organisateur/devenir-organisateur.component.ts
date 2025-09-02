@@ -22,7 +22,7 @@ import { CommonModule } from '@angular/common';
         <li>
           Envoyez-nous un e-mail à
           <a [href]="mailto" class="link" rel="noopener">
-            maxime.casteras.edu&#64;groupe-gema.com
+            culture.radar.groupe3&#64;gmail.com
           </a>
           en précisant les informations ci-dessous.
         </li>
@@ -43,31 +43,7 @@ import { CommonModule } from '@angular/common';
         <li><b>Volume estimé</b> d’événements par mois</li>
       </ul>
 
-      <div class="actions">
-        <a class="btn primary" [href]="mailto">Écrire l’e-mail pré-rempli</a>
-        <button class="btn ghost" type="button" (click)="copyEmail()">Copier l’adresse</button>
-      </div>
-
-      <details class="example">
-        <summary>Voir un exemple de message</summary>
-        <pre class="sample">
-Objet : Demande de passage en “organisateur” – CultureRadar
-
-Bonjour,
-
-Je souhaite devenir organisateur sur CultureRadar.
-
-• Compte (e-mail) : {{ email }}
-• Organisme : …
-• Site / RS : …
-• Types d’événements : …
-• Villes : …
-• Volume estimé / mois : …
-
-Merci beaucoup,
-[Nom – Téléphone]
-        </pre>
-      </details>
+      
     </article>
 
     <article class="card">
@@ -86,7 +62,7 @@ Merci beaucoup,
 
     <footer class="foot">
       Une question&nbsp;? Écrivez-nous à
-      <a [href]="plainMailto" class="link" rel="noopener">maxime.casteras.edu&#64;groupe-gema.com</a>.
+      <a [href]="plainMailto" class="link" rel="noopener">culture.radar.groupe3&#64;gmail.com</a>.
     </footer>
   </section>
   `,
